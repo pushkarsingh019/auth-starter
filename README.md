@@ -1,34 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Authentication & Authorisation Stratergy
+ 
+> The goal of this project to understand authentication and authorisation by building a basic web app.
 
-## Getting Started
+## What does the app do.
 
-First, run the development server:
+- You can login through google using the Google Identity serivices.
+- After you log in, the feed shows the name of the people who have logged in.
+- and you can click on the names, and the page you are redirected to, shows if you are authorised to edit that page or no.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## The Authentication Stratergy.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- In this application, I am using the following package to implement authentication using the google identity services : `@react-oauth/google`
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Here's the steps I used to authenticate the user.
+- Importing the GoogleLogin component from @react-oauth/google.
+> The component has a `onSuccess` prop which passes the JWT token returned by google.
+- Passing the JWT token to the backend, and passing the token to the auth function.
+- The auth function decodes the jwt using the package `jwt-decode`, and then eiher adding the user to the database, or checking if they already exists. The measure to check here is user email.
+- Then the data about the user is passed from the backend to the frontend and the client knows about the user.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## The Authorisation Stratergy
 
-## Learn More
+So, for the authorisaton to work, I wanted to the state of the application to store the JWT token returned by google. But in this application, I did not have redux or any state management solution built in, thus I had to store the JWT token in the localstorage. 
 
-To learn more about Next.js, take a look at the following resources:
+So the client gets the JWT from the state or the localstorage, and then requests the access to the backend, and if the backend says that the user is authenticated then the client loads the folloing page.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This is the steps I used to make work in my app.
+- Since there was no state management or backend, I am using the first name of the person as the key.
+- So, people can click the name from the home screen.
+- when the new page is called, the app makes a call to the server and sends the JWT token and the relevant URL. 
+- the jwt contains information about the user and the url about the services that the user wants to use.
+- depending on the response, the page says authorised or authorisation denied.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
