@@ -7,6 +7,7 @@ export default function LoginScreen({loginHandler}){
 
     async function handleLogin(response){
         let responseData = response.credential;
+        window.localStorage.setItem("userKey", responseData);
         loginHandler(responseData);
     };
 

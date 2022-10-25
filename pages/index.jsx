@@ -2,6 +2,7 @@ import Link from "next/link"
 import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import LoginScreen from "./login";
+import { useRouter } from "next/router";
 
 // importing statemanagement variables
 const initialState = {name : "", email : ""};
@@ -48,10 +49,17 @@ export default function HomeScreen(){
   },[])
 
   function FeedSection(){
+
+    const router = useRouter();
+
     return(
       <section>
         {feed ? feed.map((profile) => {
-          return <h4 key={profile.email}>{profile.name}</h4>
+          let firstName = profile.name.split(" ")[0];
+          return <h4 key={profile.email} onClick={() => {
+            console.log("this is the console of the onclick function")
+            router.push(`/people/${firstName}`)}
+        }>{profile.name}</h4>
         }) : "no feed yet"}
       </section>
     )
@@ -60,7 +68,6 @@ export default function HomeScreen(){
   return(
     <div className="app">
       <h1>{user ? `Welcome ${user.name}` : "The Home Page"}</h1>
-      {console.log(user)}
       <LoginScreen loginHandler={loginHandler} userDetail={user} />
       <hr />
     <FeedSection />
